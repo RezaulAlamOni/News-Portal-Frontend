@@ -14,7 +14,8 @@ function News(props) {
 
     let resultNews = async () => {
         const url =
-            `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
+            // `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
+            `https://newsapi.org/v2/top-headlines?category=${category}&page=${page}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(parsedData.articles);
