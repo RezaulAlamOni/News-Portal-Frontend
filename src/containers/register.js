@@ -62,7 +62,7 @@ export default function RegisterPage() {
           })
           .then(function (response) {
             localStorage.setItem("token", response?.data?.token);
-            localStorage.setItem("user", response?.data?.user);
+            localStorage.setItem("user", JSON.stringify(response?.data?.user));
             navigate("/");
             formik.setSubmitting(false);
             return response?.data;

@@ -40,7 +40,7 @@ export const postMethod = async (url, data,navigate) => {
             })
             .then(function (response) {
                 localStorage.setItem("token", response?.data?.token);
-                localStorage.setItem("user", response?.data?.user);
+                localStorage.setItem("user", JSON.stringify(response?.data?.user));
                 // window.location.href = "/";
                 return response?.data;
             })

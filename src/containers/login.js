@@ -73,7 +73,7 @@ export default function LoginPage() {
                       "p-error": Boolean(touched.email && errors.email),
                     })}
                   >
-                    User ID*
+                    Email*
                   </label>
                 </span>
                 {Boolean(touched.email && errors.email) && (

@@ -12,7 +12,7 @@ import { Badge } from "primereact/badge";
 import { Menu } from "primereact/menu";
 import { OverlayPanel } from "primereact/overlaypanel";
 import {Link, useNavigate} from "react-router-dom";
-import {CheckToken} from "../library/helper";
+import {CheckToken, getAuthUser} from "../library/helper";
 
 export default function NavBar1() {
     const history = useNavigate();
@@ -21,9 +21,11 @@ export default function NavBar1() {
 
     const dispatch = useDispatch();
 
+    const authUser = getAuthUser();
+
     const userMenu = [
         {
-            label: "Hi, User",
+            label: "Hi, "+ authUser?.name,
             items: [
                 {
                     label: "Home",
