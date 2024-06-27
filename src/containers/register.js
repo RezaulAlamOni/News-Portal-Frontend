@@ -44,7 +44,7 @@ export default function RegisterPage() {
   return (
     <div className="form-box">
       <div className="fullHeight p-ai-center p-d-flex p-jc-center">
-        <div className="shadow card m-3 px-3 py-4 px-sm-4 py-sm-5">
+        <div className="shadow card px-3 py-4 px-sm-4 py-sm-5">
           <h4 className="text-center">Sign Up to App</h4>
           <p className="text-center mb-3">Enter your details below.</p>
           <FormikProvider value={formik}>

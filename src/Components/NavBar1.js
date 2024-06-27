@@ -4,7 +4,6 @@ import "../assets/css/header.css";
 
 import Logo from "../assets/images/logo.png";
 import Avatar from "../assets/images/avatar.jpg";
-import { DashboardIcon } from "../assets/icons";
 
 import { useDispatch } from "react-redux";
 import { openSideBar } from "../library/store/sidebar";
@@ -12,7 +11,8 @@ import { Badge } from "primereact/badge";
 
 import { Menu } from "primereact/menu";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {CheckToken} from "../library/helper";
 
 export default function NavBar1() {
     const history = useNavigate();
@@ -71,9 +71,12 @@ export default function NavBar1() {
         <>
             <div className="header-box d-flex p-ai-center">
                 <div>
-                    <img src={Logo} alt="Logo" className="img img-fluid logo" />
+                    <Link to={`/`}>
+                        <img src={Logo} alt="Logo" className="img img-fluid logo" />
+                    </Link>
                 </div>
                 <div className="ml-auto menu-items mr-0">
+                    { CheckToken() ?
                     <ul className="nav-list d-flex p-ai-center flex-row-reverse">
                         <li>
                             <img
@@ -92,10 +95,23 @@ export default function NavBar1() {
                                 <Badge value="0"></Badge>
                             </i>
                         </li>
-                    </ul>
+                    </ul> :
+                    <ul className="nav-list d-flex p-ai-center flex-row-reverse">
+                        <li >
+                            <Link className="nav-link" to={`/login`}>
+                                Sign In
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="nav-link" to={`/register`}>
+                                Sign Up
+                            </Link>
+                        </li>
+                    </ul> }
                 </div>
             </div>
             <Menu model={userMenu} popup ref={userMenuRef} id="user_pop_menu" />
+
             <OverlayPanel
                 ref={notificationRef}
                 breakpoints={notificationPanelSetting}

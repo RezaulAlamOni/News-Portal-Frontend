@@ -2,8 +2,11 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import {openSideBar} from "../library/store/sidebar";
+import {useDispatch} from "react-redux";
 
 function NavBar2() {
+    const dispatch = useDispatch();
     return (
         <div>
             <nav className="navbar navbar-expand-lg
@@ -18,7 +21,16 @@ function NavBar2() {
                         aria-expanded="false"
                         aria-label="Toggle navigation"
                     >
-                        <span className="navbar-toggler-icon"></span>
+                        <button
+                            className="p-d-inline-block p-d-lg-none btn btn-link p-0 mr-3"
+                            aria-label="open sidebar"
+                            onClick={() => {
+                                dispatch(openSideBar());
+                            }}
+                        >
+                            <i className="pi pi-bars"></i>
+                        </button>
+                        {/*<span className="navbar-toggler-icon"></span>*/}
                     </button>
                     <div className="collapse navbar-collapse"
                          id="navbarNav">

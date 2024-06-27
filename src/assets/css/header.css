@@ -6,8 +6,12 @@
   background: #3a4574;
 }
 
+.shadow{
+  margin: auto !important;
+}
+
 .header-box .logo {
-  max-width: 100px;
+  max-width: 75px;
   max-height: 50px;
   object-fit: contain;
 }
@@ -34,4 +38,11 @@
   position: relative;
   top: 5px;
   cursor: pointer;
+}
+
+
+.menu-items .nav-link {
+  color: white !important;
+  font-weight: 400 !important;
+  padding-right: 0 !important;
 }

@@ -6,6 +6,7 @@ import News from "./Components/News";
 import {BrowserRouter, Route, Routes}
     from "react-router-dom";
 import LoginPage from "./containers/login";
+import RegisterPage from "./containers/register";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                             <div className="col-md">
                                 <Routes>
                                     <Route path="/login" element={<LoginPage />} />
+                                    <Route path="/register" element={<RegisterPage />} />
                                     <Route
                                         path="/"
                                         element={
