@@ -11,9 +11,9 @@ const initialState = {
 
 export const authenticateUser = createAsyncThunk(
     "authentication/user",
-    async (data, thunkAPI) => {
-      const response = await postMethod(loginUrl, data);
-      return response.data; // Assuming response.data contains the relevant login data
+    async (data,navigate) => {
+      const response = await postMethod(loginUrl, data,navigate);
+      return response; // Assuming response.data contains the relevant login data
     }
 );
 

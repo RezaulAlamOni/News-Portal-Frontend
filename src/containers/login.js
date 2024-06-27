@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (CheckToken()) {
-      navigate("/dashboard");
+      navigate("/");
     }
   }, []);
 
@@ -36,13 +36,13 @@ export default function LoginPage() {
     validationSchema: LoginSchema,
     onSubmit: (data) => {
       console.log(data);
-      dispatch(authenticateUser(data));
+      dispatch(authenticateUser(data,navigate));
       setTimeout(() => {
         formik.setSubmitting(false);
         if (CheckToken()) {
-          navigate("/dashboard");
+          navigate("/");
         }
-      }, 2000);
+      }, 4500);
     },
   });
 

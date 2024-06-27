@@ -1,7 +1,6 @@
 import {baseUrl} from "./constant";
 import axios from "axios";
 import {getToken} from "./helper";
-
 // api calls
 export const getMethod = async (url) => {
     const token = getToken() || "";
@@ -26,7 +25,7 @@ export const getMethod = async (url) => {
     }
 };
 
-export const postMethod = async (url, data) => {
+export const postMethod = async (url, data,navigate) => {
     const token = getToken() || "";
     try {
         axios
@@ -42,6 +41,7 @@ export const postMethod = async (url, data) => {
             .then(function (response) {
                 localStorage.setItem("token", response?.data?.token);
                 localStorage.setItem("user", response?.data?.user);
+                // window.location.href = "/";
                 return response?.data;
             })
             .catch(function (error) {
