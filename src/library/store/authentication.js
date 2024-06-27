@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { postMethod } from "../api";
-import { loginUrl } from "../constant";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {postMethod} from "../api";
+import {loginUrl, signUpUrl} from "../constant";
 
 const initialState = {
   value: {
@@ -16,6 +16,12 @@ export const authenticateUser = createAsyncThunk(
       return response; // Assuming response.data contains the relevant login data
     }
 );
+// export const registrationUser = createAsyncThunk(
+//     "authentication/user",
+//     async (data,navigate) => {
+//         return await postMethod(signUpUrl, data, navigate); // Assuming response.data contains the relevant login data
+//     }
+// );
 
 export const authenticationSlice = createSlice({
   name: "authentication",

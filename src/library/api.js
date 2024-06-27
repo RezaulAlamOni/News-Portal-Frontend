@@ -53,6 +53,35 @@ export const postMethod = async (url, data,navigate) => {
         return error;
     }
 };
+export const registrationMethod = async (url, data) => {
+    const token = getToken() || "";
+    try {
+        axios
+            .post(baseUrl + url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Token ${token}`,
+                },
+                data,
+                email: data?.email,
+                password: data?.password,
+                name: data?.name,
+            })
+            .then(function (response) {
+                // localStorage.setItem("token", response?.data?.token);
+                // localStorage.setItem("user", response?.data?.user);
+                // window.location.href = "/";
+                return response?.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return error;
+            });
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+};
 
 export const putMethod = async (url) => {
     const token = getToken() || "";
