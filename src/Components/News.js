@@ -12,6 +12,8 @@ function News(props) {
     let [source, setSource] = useState([]);
     let [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     let [sourcesList, setSourcesList] = useState([]);
+    const [keyword, setKeyword] = useState("");
+
 
     useEffect(() => {
         fetchSources();
@@ -29,8 +31,10 @@ function News(props) {
         sourcesParam = source.map(s => s.value).join(',');
         let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=52b612bf193947bdb4e6024b89524a15`;
         console.log(sourcesParam)
-        if (sourcesParam !== '' ) {
-            url = `https://newsapi.org/v2/everything?q=&from=${date}&to=${date}&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        if (sourcesParam !== '') {
+            url = `https://newsapi.org/v2/everything?q=&from=&to=&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        } else if (keyword !== '') {
+            url = `https://newsapi.org/v2/everything?q=${keyword}&from=&to=&sortBy=popularity&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
         }
 
         let data = await fetch(url);
@@ -41,10 +45,19 @@ function News(props) {
 
     useEffect(() => {
         resultNews();
-    }, [category, source, date]);
+    }, [category, source, date,keyword]);
 
     let fetchData = async () => {
-        const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page + 1}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        // const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page + 1}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        let sourcesParam = '';
+        sourcesParam = source.map(s => s.value).join(',');
+        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        console.log(sourcesParam)
+        if (sourcesParam !== '') {
+            url = `https://newsapi.org/v2/everything?q=&from=&to=&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        } else if (keyword !== '') {
+            url = `https://newsapi.org/v2/everything?q=${keyword}&from=${date}&to=&sortBy=popularity&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        }
         setPage(page + 1);
         let data = await fetch(url);
         let parsedData = await data.json();
@@ -59,7 +72,16 @@ function News(props) {
         <>
             <div className="container my-2">
                 <div className="row mb-3">
-                    <div className="col-md-4">
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Keyword"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-md-3">
                         <input
                             type="date"
                             className="form-control"
@@ -67,12 +89,13 @@ function News(props) {
                             onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                         <select
                             className="form-control"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                         >
+                            <option value="">Select Category</option>
                             <option value="general">General</option>
                             <option value="entertainment">Entertainment</option>
                             <option value="technology">Technology</option>
@@ -82,7 +105,7 @@ function News(props) {
                             <option value="science">Science</option>
                         </select>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                         <Select
                             isMulti
                             name="sources"
@@ -92,6 +115,7 @@ function News(props) {
                             }))}
                             className="basic-multi-select"
                             classNamePrefix="select"
+                            placeholder="Select Source"
                             value={source}
                             onChange={handleSourceChange}
                         />
