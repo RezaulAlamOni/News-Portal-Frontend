@@ -1,4 +1,5 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import NewsItem from "./NewsItem";
 import Image from "../Resource/Images/img.png";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -7,15 +8,31 @@ function News(props) {
     let [articles, setArticles] = useState([]);
     let [totalResults, setTotalResults] = useState(0);
     let [page, setPage] = useState(1);
-    let [category, setCategory] = useState("");
-    let [source, setSource] = useState("");
+    let [category, setCategory] = useState("general");
+    let [source, setSource] = useState([]);
     let [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    let resultNews = async () => {
-        let url = `https://newsapi.org/v2/everything?q=apple&from=${date}&to=${date}&sortBy=popularity&sources=${source}&page=${page}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
+    let [sourcesList, setSourcesList] = useState([]);
 
-        if (category !== "" || date !== "") {
-            url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&from=${date}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
+    useEffect(() => {
+        fetchSources();
+    }, []);
+//ecfaf9eaaa8d40a5b5d769210f5ee616
+    let fetchSources = async () => {
+        const url = `https://newsapi.org/v2/top-headlines/sources?apiKey=52b612bf193947bdb4e6024b89524a15`;
+        let data = await fetch(url);
+        let parsedData = await data.json();
+        setSourcesList(parsedData.sources);
+    };
+
+    let resultNews = async () => {
+        let sourcesParam = '';
+        sourcesParam = source.map(s => s.value).join(',');
+        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        console.log(sourcesParam)
+        if (sourcesParam !== '' ) {
+            url = `https://newsapi.org/v2/everything?q=&from=${date}&to=${date}&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
         }
+
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(parsedData?.articles ?? []);
@@ -27,11 +44,15 @@ function News(props) {
     }, [category, source, date]);
 
     let fetchData = async () => {
-        const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page + 1}&apiKey=ecfaf9eaaa8d40a5b5d769210f5ee616`;
+        const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page + 1}&apiKey=52b612bf193947bdb4e6024b89524a15`;
         setPage(page + 1);
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(articles.concat(parsedData.articles));
+    };
+
+    let handleSourceChange = (selectedOptions) => {
+        setSource(selectedOptions);
     };
 
     return (
@@ -52,7 +73,6 @@ function News(props) {
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                         >
-                            <option value="">Select Category</option>
                             <option value="general">General</option>
                             <option value="entertainment">Entertainment</option>
                             <option value="technology">Technology</option>
@@ -63,12 +83,17 @@ function News(props) {
                         </select>
                     </div>
                     <div className="col-md-4">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Source"
+                        <Select
+                            isMulti
+                            name="sources"
+                            options={sourcesList.map((source) => ({
+                                value: source.id,
+                                label: source.name
+                            }))}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
                             value={source}
-                            onChange={(e) => setSource(e.target.value)}
+                            onChange={handleSourceChange}
                         />
                     </div>
                 </div>
