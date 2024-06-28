@@ -3,6 +3,7 @@ import Select from "react-select";
 import NewsItem from "./NewsItem";
 import Image from "../Resource/Images/img.png";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {newApiKey} from "../library/constant";
 
 function News(props) {
     let [articles, setArticles] = useState([]);
@@ -20,7 +21,7 @@ function News(props) {
     }, []);
 //ecfaf9eaaa8d40a5b5d769210f5ee616
     let fetchSources = async () => {
-        const url = `https://newsapi.org/v2/top-headlines/sources?apiKey=52b612bf193947bdb4e6024b89524a15`;
+        const url = `https://newsapi.org/v2/top-headlines/sources?apiKey=${newApiKey}`;
         let data = await fetch(url);
         let parsedData = await data.json();
         setSourcesList(parsedData.sources);
@@ -29,12 +30,12 @@ function News(props) {
     let resultNews = async () => {
         let sourcesParam = '';
         sourcesParam = source.map(s => s.value).join(',');
-        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=${newApiKey}`;
         console.log(sourcesParam)
         if (sourcesParam !== '') {
-            url = `https://newsapi.org/v2/everything?q=&from=&to=&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+            url = `https://newsapi.org/v2/top-headlines?sources==${sourcesParam}&page=${page}&apiKey=${newApiKey}`;
         } else if (keyword !== '') {
-            url = `https://newsapi.org/v2/everything?q=${keyword}&from=&to=&sortBy=popularity&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+            url = `https://newsapi.org/v2/top-headlines?q=${keyword}&page=${page}&apiKey=${newApiKey}`;
         }
 
         let data = await fetch(url);
@@ -48,15 +49,14 @@ function News(props) {
     }, [category, source, date,keyword]);
 
     let fetchData = async () => {
-        // const url = `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page + 1}&apiKey=52b612bf193947bdb4e6024b89524a15`;
         let sourcesParam = '';
         sourcesParam = source.map(s => s.value).join(',');
-        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+        let  url = `https://newsapi.org/v2/top-headlines?category=${category}&from=${date}&apiKey=${newApiKey}`;
         console.log(sourcesParam)
         if (sourcesParam !== '') {
-            url = `https://newsapi.org/v2/everything?q=&from=&to=&sortBy=popularity&sources=${sourcesParam}&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+            url = `https://newsapi.org/v2/top-headlines?sources==${sourcesParam}&page=${page}&apiKey=${newApiKey}`;
         } else if (keyword !== '') {
-            url = `https://newsapi.org/v2/everything?q=${keyword}&from=${date}&to=&sortBy=popularity&page=${page}&apiKey=52b612bf193947bdb4e6024b89524a15`;
+            url = `https://newsapi.org/v2/top-headlines?q=${keyword}&page=${page}&apiKey=${newApiKey}`;
         }
         setPage(page + 1);
         let data = await fetch(url);
@@ -137,17 +137,42 @@ function News(props) {
                 <div className="container">
                     <div className="row">
                         {articles.map((element) => {
-                            return (
-                                <div className="col-md-4" key={element.url}>
-                                    <NewsItem
-                                        sourceName={element.source.name}
-                                        title={element.title}
-                                        desc={element.description}
-                                        imageURL={element.urlToImage ? element.urlToImage : Image}
-                                        newsUrl={element.url}
-                                    />
-                                </div>
-                            );
+                            if (element.title !== '[Removed]') {
+                                return (
+                                    <div className="col-md-4" key={element.url}>
+                                        {/*<NewsItem*/}
+                                        {/*    sourceName={element?.source?.name}*/}
+                                        {/*    title={element?.title}*/}
+                                        {/*    desc={element?.description}*/}
+                                        {/*    imageURL={element.urlToImage ? element.urlToImage : Image}*/}
+                                        {/*    newsUrl={element.url}*/}
+                                        {/*/>*/}
+
+                                        <div>
+                                            <div className="card my-3">
+
+                                                <img src={element.urlToImage ? element.urlToImage : Image}
+                                                     className="card-img-top" alt="..." />
+                                                <div className="card-body">
+                                                    <h5 className="card-title">{element?.title}</h5>
+                                                    <p className="w-100 fs-6
+						text-body-secondary
+						text-end">
+                                                        - {element?.source?.name}
+                                                    </p>
+                                                    <p className="card-text">{element?.description}</p>
+                                                    <a href={element.url}
+                                                       target="_blank"
+                                                       className="btn btn-primary btn-sm">
+                                                        Read More...
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
                         })}
                     </div>
                 </div>
