@@ -108,11 +108,11 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <div className="forgotPassword text-right">
-                <Link to="/forgot-password">
-                  <u>Forgot Password</u>
-                </Link>
-              </div>
+              {/*<div className="forgotPassword text-right">*/}
+              {/*  <Link to="/forgot-password">*/}
+              {/*    <u>Forgot Password</u>*/}
+              {/*  </Link>*/}
+              {/*</div>*/}
 
               <div className="submitBtnBox">
                 <Button
