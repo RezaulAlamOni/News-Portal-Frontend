@@ -14,7 +14,7 @@ function App() {
             <div className="App">
                 <BrowserRouter>
                     <NavBar1/>
-                    <NavBar2/>
+                    {/*<NavBar2/>*/}
 
                     <div className="container">
                         <div className="row">
