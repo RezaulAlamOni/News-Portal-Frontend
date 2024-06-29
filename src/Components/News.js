@@ -3,11 +3,12 @@ import Select from "react-select";
 import NewsItem from "./NewsItem";
 import Image from "../Resource/Images/img.png";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {baseUrl, newApiKey, saveCustomizedNewsfeedUrl, signUpUrl} from "../library/constant";
+import {baseUrl, newApiKey, saveCustomizedNewsfeedUrl, signUpUrl, worldNewsApiKey} from "../library/constant";
 import CustomNewsFeedModal from './CustomNewsFeedPopup';  // Import the modal component
 import axios from 'axios';
 import {getAuthUser, getToken} from "../library/helper";
-import {useNavigate} from "react-router-dom";  // For making API calls
+import {useNavigate} from "react-router-dom";
+import {array} from "yup";  // For making API calls
 
 function News(props) {
     const authUser = getAuthUser();
@@ -60,6 +61,7 @@ function News(props) {
 
     useEffect(() => {
         resultNews();
+        fetchDataFormworldnewsapi();
     }, [category, source, date, keyword]);
 
     let handleKeyChange = (val) => {
@@ -73,6 +75,35 @@ function News(props) {
         let parsedData = await data.json();
         setArticles(articles.concat(parsedData.articles));
     };
+
+    let fetchDataFormworldnewsapi = async () => {
+        let url = `https://api.worldnewsapi.com/top-news?api-key=${worldNewsApiKey}&text=tesla&source-country=us&language=en&headlines-only=false`;
+        let data = await fetch(url);
+        let parsedData = await data.json();
+        console.log(parsedData)
+        parsedData = parsedData?.top_news;
+        let news = [];
+        parsedData = parsedData.map((item) => {
+            item = item?.news;
+            item.map((item1) => {
+                let data1 = {
+                    title: item1?.title,
+                    description: item1?.summary,
+                    url: item1?.url,
+                    urlToImage: item1?.image,
+                    source: {
+                        name: item1?.source
+                    }
+                }
+                news.push(data1)
+            })
+
+        })
+        if (articles.length <= 0) {
+            setArticles(news);
+        }
+        // setTotalResults(parsedData);
+    }
 
 
     const urlGenerator = () => {
