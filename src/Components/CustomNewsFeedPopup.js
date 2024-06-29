@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
-import {getAuthUser} from "../library/helper";
+import {getAuthUser, getCustomFeed, getToken} from "../library/helper";
+import {baseUrl, saveCustomizedNewsfeedUrl} from "../library/constant";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const CustomNewsFeedModal = ({ show, handleClose, sourcesList, saveCustomFeed }) => {
 
@@ -10,6 +13,21 @@ const CustomNewsFeedModal = ({ show, handleClose, sourcesList, saveCustomFeed })
     const [category, setCategory] = useState(user?.custom_newsfeed?.category || '');
     const [sources, setSources] = useState(JSON.parse(user?.custom_newsfeed?.source) || []);
     const [author, setAuthor] = useState(user?.custom_newsfeed?.author || '');
+    const [savedCustomFeed, setSavedCustomFeed] = useState(user?.custom_newsfeed || {});
+
+    useEffect(() => {
+        setSavedCustomFeed(user?.custom_newsfeed);
+        // Transform initial sources from database format to Select component format
+        const initialSources = JSON.parse(savedCustomFeed?.source || '[]').map(sourceId => {
+            const source = sourcesList.find(s => s.id === sourceId);
+            return source ? { value: source.id, label: source.name } : null;
+        }).filter(source => source !== null);
+
+        setSources(initialSources);
+        setAuthor(savedCustomFeed?.author || '');
+        setCategory(savedCustomFeed?.category || '');
+
+    }, [sourcesList]);
 
     const handleSave = () => {
         const customFeed = {

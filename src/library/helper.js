@@ -1,5 +1,7 @@
-import { Route, Navigate } from "react-router-dom";
+import {Navigate, Route, useNavigate} from "react-router-dom";
 import LayoutPage from "../Components/layout";
+import {baseUrl, saveCustomizedNewsfeedUrl} from "./constant";
+import axios from "axios";
 
 export const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route

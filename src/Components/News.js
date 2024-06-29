@@ -33,26 +33,8 @@ function News(props) {
     };
 
     let resultNews = async () => {
-        let sourcesParam = '';
-        sourcesParam = source.map(s => s.value).join(',');
-        let  url = `https://newsapi.org/v2/top-headlines?apiKey=${newApiKey}`;
-        if (search_type === 'source') {
-            url += `&sources=${sourcesParam}&page=${page}`;
-            if (sourcesParam !== ''){
-                setSearchType('category');
-                url += `&category=${category}&from=${date}`;
-            }
-        }
-        else if (search_type === 'keyword') {
-            url += `&q=${keyword}&page=${page}`;
-            if (keyword !== ''){
-                setSearchType('category');
-                url += `&category=${category}&from=${date}`;
-            }
-        }
-        else {
-            url += `&category=${category}&from=${date}`;
-        }
+        let url = urlGenerator();
+
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(parsedData?.articles ?? []);
@@ -68,29 +50,37 @@ function News(props) {
     };
 
     let fetchData = async () => {
-        let sourcesParam = '';
-        sourcesParam = source.map(s => s.value).join(',');
-        let  url = `https://newsapi.org/v2/top-headlines?apiKey=${newApiKey}`;
-        if (search_type === 'source') {
-            if (sourcesParam === ''){
-                return true;
-            }
-            url += `&sources=${sourcesParam}&page=${page}`;
-        }
-        else if (search_type === 'keyword') {
-            if (keyword === ''){
-                return true;
-            }
-            url += `&q=${keyword}&page=${page}`;
-        }
-        else {
-            url += `&category=${category}&from=${date}`;
-        }
+        let url = urlGenerator();
         setPage(page + 1);
         let data = await fetch(url);
         let parsedData = await data.json();
         setArticles(articles.concat(parsedData.articles));
     };
+
+
+    const urlGenerator = () => {
+        let sourcesParam = '';
+        sourcesParam = source.map(s => s.value).join(',');
+        let  url = `https://newsapi.org/v2/top-headlines?apiKey=${newApiKey}`;
+        if (search_type == 'source') {
+            if (sourcesParam === ''){
+                setSearchType('category');
+                url += `&category=${category}&from=${date}`;
+            } else {
+                url += `&sources=${sourcesParam}&page=${page}`;
+            }
+        } else if (search_type === 'keyword') {
+            if (keyword === ''){
+                setSearchType('category');
+                url += `&category=${category}&from=${date}`;
+            } else {
+                url += `&q=${keyword}&page=${page}`;
+            }
+        } else {
+            url += `&category=${category}&from=${date}`;
+        }
+        return url;
+    }
 
     let handleSourceChange = (selectedOptions) => {
         handleKeyChange('source');
@@ -114,6 +104,9 @@ function News(props) {
             axios.request(config)
                 .then((response) => {
                     console.log(response.data);
+                    let data = response.data;
+                    localStorage.removeItem('user');
+                    localStorage.setItem('user', JSON.stringify(data.user));
                 })
                 .catch((error) => {
                     console.log(error.response.data);
@@ -135,6 +128,7 @@ function News(props) {
         }
         setShowModal(true);
     }
+
 
     return (
         <>
