@@ -12,6 +12,8 @@ import {Link, useNavigate} from "react-router-dom";
 import { CheckToken } from "../library/helper";
 import { authenticateUser } from "../library/store/authentication";
 import { useDispatch } from "react-redux";
+import axios from "axios";
+import {baseUrl, loginUrl} from "../library/constant";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -36,13 +38,29 @@ export default function LoginPage() {
     validationSchema: LoginSchema,
     onSubmit: (data) => {
       console.log(data);
-      dispatch(authenticateUser(data,navigate));
-      setTimeout(() => {
-        formik.setSubmitting(false);
-        if (CheckToken()) {
-          navigate("/");
-        }
-      }, 4000);
+      // dispatch(authenticateUser(data,navigate));
+      axios
+          .post(baseUrl + loginUrl, {
+            headers: {
+              "Content-Type": "application/json"
+            },
+            email: data?.email,
+            password: data?.password
+          })
+          .then(function (response) {
+            localStorage.setItem("token", response?.data?.token);
+            localStorage.setItem("user", JSON.stringify(response?.data?.user));
+            formik.setSubmitting(false);
+            setTimeout(() => {
+              if (CheckToken()) {
+                navigate("/");
+              }
+            },1000);
+          })
+          .catch(function (error) {
+            console.log(error);
+            return error;
+          });
     },
   });
 

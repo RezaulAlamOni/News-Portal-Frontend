@@ -11,7 +11,7 @@ const CustomNewsFeedModal = ({ show, handleClose, sourcesList, saveCustomFeed })
     const user = getAuthUser();
 
     const [category, setCategory] = useState(user?.custom_newsfeed?.category || '');
-    const [sources, setSources] = useState(JSON.parse(user?.custom_newsfeed?.source) || []);
+    const [sources, setSources] = useState([]);
     const [author, setAuthor] = useState(user?.custom_newsfeed?.author || '');
     const [savedCustomFeed, setSavedCustomFeed] = useState(user?.custom_newsfeed || {});
 

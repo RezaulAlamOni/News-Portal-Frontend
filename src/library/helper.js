@@ -30,5 +30,5 @@ export const getToken = () => {
   return localStorage.getItem("token") || null;
 };
 export const getAuthUser = () => {
-  return JSON.parse(localStorage.getItem("user")) || null;
+  return JSON.parse(localStorage.getItem("user") ?? "{}");
 };

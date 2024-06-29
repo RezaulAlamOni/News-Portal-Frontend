@@ -31,14 +31,14 @@ export default function NavBar1() {
                     label: "Home",
                     icon: "pi pi-home",
                     command: (e) => {
-                        history("/dashboard");
+                        history("/");
                     },
                 },
                 {
                     label: "Profile",
                     icon: "pi pi-user",
                     command: (e) => {
-                        history("/user-profile");
+                        history("/");
                     },
                 },
                 {

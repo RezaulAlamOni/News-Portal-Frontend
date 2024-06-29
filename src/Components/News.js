@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import Select from "react-select";
 import NewsItem from "./NewsItem";
 import Image from "../Resource/Images/img.png";
@@ -6,10 +6,11 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {baseUrl, newApiKey, saveCustomizedNewsfeedUrl, signUpUrl} from "../library/constant";
 import CustomNewsFeedModal from './CustomNewsFeedPopup';  // Import the modal component
 import axios from 'axios';
-import {getToken} from "../library/helper";
+import {getAuthUser, getToken} from "../library/helper";
 import {useNavigate} from "react-router-dom";  // For making API calls
 
 function News(props) {
+    const authUser = getAuthUser();
     let [articles, setArticles] = useState([]);
     let [totalResults, setTotalResults] = useState(0);
     let [page, setPage] = useState(1);
@@ -22,14 +23,30 @@ function News(props) {
     const [search_type, setSearchType] = useState("category");
 
     useEffect(() => {
-        fetchSources();
+            fetchSources();
     }, []);
 
     let fetchSources = async () => {
         const url = `https://newsapi.org/v2/top-headlines/sources?apiKey=${newApiKey}`;
-        let data = await fetch(url);
-        let parsedData = await data.json();
-        setSourcesList(parsedData.sources ?? []);
+        axios.get(url)
+            .then((response) => {
+                let data = response.data;
+                setSourcesList(data.sources ?? []);
+                setTimeout(() => {
+                    console.log(authUser?.custom_newsfeed?.source)
+                    data = data.sources;
+                    const initialSources = JSON.parse(authUser?.custom_newsfeed?.source || '[]').map(sourceId => {
+                        const source = data.find(s => s.id === sourceId);
+                        return source ? {value: source.id, label: source.name} : null;
+                    }).filter(source => source !== null);
+                    setSource(initialSources);
+                    setCategory(authUser?.custom_newsfeed?.category || '');
+                    setSearchType('source');
+                }, 100);
+            })
+            .catch((error) => {
+                console.error('Error fetching sources:', error);
+            })
     };
 
     let resultNews = async () => {
@@ -43,7 +60,7 @@ function News(props) {
 
     useEffect(() => {
         resultNews();
-    }, [category, source, date,keyword]);
+    }, [category, source, date, keyword]);
 
     let handleKeyChange = (val) => {
         setSearchType(val); // Trigger searchType change to 'keyword'
@@ -61,16 +78,16 @@ function News(props) {
     const urlGenerator = () => {
         let sourcesParam = '';
         sourcesParam = source.map(s => s.value).join(',');
-        let  url = `https://newsapi.org/v2/top-headlines?apiKey=${newApiKey}`;
+        let url = `https://newsapi.org/v2/top-headlines?apiKey=${newApiKey}`;
         if (search_type == 'source') {
-            if (sourcesParam === ''){
+            if (sourcesParam === '') {
                 setSearchType('category');
                 url += `&category=${category}&from=${date}`;
             } else {
                 url += `&sources=${sourcesParam}&page=${page}`;
             }
         } else if (search_type === 'keyword') {
-            if (keyword === ''){
+            if (keyword === '') {
                 setSearchType('category');
                 url += `&category=${category}&from=${date}`;
             } else {
@@ -98,7 +115,7 @@ function News(props) {
                 headers: {
                     'Authorization': 'Bearer ' + getToken(),
                 },
-                data : customFeed
+                data: customFeed
             };
 
             axios.request(config)
@@ -134,24 +151,29 @@ function News(props) {
         <>
             <div className="container my-2">
                 <div className="row mb-3">
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <input
                             type="text"
                             className="form-control"
                             placeholder="Keyword"
                             value={keyword}
-                            onChange={(e) =>{ setKeyword(e.target.value);handleKeyChange('keyword')}}
+                            onChange={(e) => {
+                                setKeyword(e.target.value);
+                                handleKeyChange('keyword')
+                            }}
                         />
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <input
                             type="date"
                             className="form-control"
                             value={date}
-                            onChange={(e) => {setDate(e.target.value);}}
+                            onChange={(e) => {
+                                setDate(e.target.value);
+                            }}
                         />
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <select
                             className="form-control"
                             value={category}
@@ -170,7 +192,25 @@ function News(props) {
                             <option value="science">Science</option>
                         </select>
                     </div>
-                    <div className="col-md-3">
+                    {/*<div className="col-md-3">*/}
+                    {/*    {<Select*/}
+                    {/*        isMulti*/}
+                    {/*        name="sources"*/}
+                    {/*        options={sourcesList?.map((source) => ({*/}
+                    {/*            value: source.id,*/}
+                    {/*            label: source.name*/}
+                    {/*        }))}*/}
+                    {/*        className="basic-multi-select"*/}
+                    {/*        classNamePrefix="select"*/}
+                    {/*        placeholder="Select Source"*/}
+                    {/*        value={source}*/}
+                    {/*        onChange={handleSourceChange}*/}
+                    {/*    />}*/}
+                    {/*</div>*/}
+                </div>
+                <div className="row">
+
+                    <div className="col-md-9">
                         {<Select
                             isMulti
                             name="sources"
@@ -185,13 +225,12 @@ function News(props) {
                             onChange={handleSourceChange}
                         />}
                     </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12 text-right">
+                    <div className="col-md-3 text-right">
                         <button className="btn btn-primary" onClick={showModalCondition}>
                             Customize News Feed
                         </button>
                     </div>
+
                 </div>
             </div>
 
@@ -208,7 +247,7 @@ function News(props) {
                 hasMore={articles.length < totalResults}
                 loader={<h4 className="text-center">Loading...</h4>}
                 endMessage={
-                    <p style={{ textAlign: "center" }}>
+                    <p style={{textAlign: "center"}}>
                         <b>Yay! You have seen it all</b>
                     </p>
                 }
