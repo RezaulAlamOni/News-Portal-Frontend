@@ -61,7 +61,7 @@ function News(props) {
 
     useEffect(() => {
         resultNews();
-        fetchDataFormworldnewsapi();
+        // fetchDataFormworldnewsapi();
     }, [category, source, date, keyword]);
 
     let handleKeyChange = (val) => {
